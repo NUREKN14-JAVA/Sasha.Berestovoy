@@ -18,43 +18,40 @@ class HsqldbUserDao implements UserDao {
 	private static final String FIND_BY_ID = "SELECT id, firstname, lastname, dateofbirth FROM users WHERE id=?";
 	private static final String SELECT_ALL_QUERY = "SELECT id,firstname, lastname, dateofbirth FROM users";
 	private static final String INSERT_QUERY = "INSERT INTO users(firstname, lastname, dateofbirth) VALUES (?, ?, ?)";
-	private ConnectionFactory connectionFactory;
+private ConnectionFactory ConnectionFactory;
 	
-	public HsqldbUserDao(){	
-	}
+	public HsqldbUserDao(){		
+	};
 	
 	public HsqldbUserDao(ConnectionFactory connectionFactory){
-		this.connectionFactory = connectionFactory;
-	}
-	
+		this.ConnectionFactory = connectionFactory;
+	};
 	
 	public ConnectionFactory getConnectionFactory() {
-		return connectionFactory;
+		return ConnectionFactory;
 	}
-
-
 
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
+		ConnectionFactory = connectionFactory;
+		//this.connectionFactory = connectionFactory;
 	}
 
-
-
+	@Override
 	public User create(User user) throws DatabaseException {
-		try {
-			Connection connection = connectionFactory.createConnection();
+		try{
+		Connection connection = ConnectionFactory.createConnection();
 			PreparedStatement statement = connection.prepareStatement(INSERT_QUERY);
-			statement.setString(1, user.getFirstName());
+			statement.setString(1, user.getFirstName());		
 			statement.setString(2, user.getLastName());
 			statement.setDate(3, new Date(user.getDateOfBirthd().getTime()));
 			int n = statement.executeUpdate();
-			if (n!=1) {
-				throw new DatabaseException("Number of the inserted rows:" + n);
+			if (n != 1 ) {
+				throw new DatabaseException("Number of the inserted rows: " + n);
 			}
 			CallableStatement callableStatement = connection.prepareCall("call IDENTITY()");
 			ResultSet keys = callableStatement.executeQuery();
-			if (keys.next()){
-				user.setId(new Long(keys.getLong(1)));
+			if (keys.next()) {
+				user.setId(new Long (keys.getLong(1)));
 			}
 			keys.close();
 			callableStatement.close();
@@ -66,12 +63,12 @@ class HsqldbUserDao implements UserDao {
 		} catch (SQLException e) {
 			throw new DatabaseException(e);
 		}
-	}
-
+		}
+		
 	@Override
 	public void update(User user) throws DatabaseException {
 		try {
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = ConnectionFactory.createConnection();
 			PreparedStatement statement = connection
 					.prepareStatement(UPDATE_QUERY);
 			statement.setString(1, user.getFirstName());
@@ -92,11 +89,10 @@ class HsqldbUserDao implements UserDao {
 		return;
 		}
 
-
 	@Override
 	public void delete(User user) throws DatabaseException {
 		try{
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = ConnectionFactory.createConnection();
 			PreparedStatement statement = connection
 					.prepareStatement(DELETE_USER);
 			statement.setLong(1,user.getId());
@@ -117,10 +113,10 @@ class HsqldbUserDao implements UserDao {
 
 	@Override
 	public User find(Long id) throws DatabaseException {
-User user = new User();
+		User user = new User();
 		
 		try {
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = ConnectionFactory.createConnection();
 			PreparedStatement statement = connection
 					.prepareStatement(FIND_BY_ID);
 			statement.setLong(1, id) ;
@@ -145,17 +141,18 @@ User user = new User();
 		return user;
 	}
 
+
 	@Override
 	public Collection findAll() throws DatabaseException {
 		Collection result = new LinkedList();
-			
+		
 		try {
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = ConnectionFactory.createConnection();
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(SELECT_ALL_QUERY);
 			while (resultSet.next()){
 				User user = new User();
-				user.setId(new Long(resultSet.getLong(1)));
+				user.setId( new Long(resultSet.getLong(1)));
 				user.setFirstName(resultSet.getString(2));
 				user.setLastName(resultSet.getString(3));
 				user.setDateOfBirthd(resultSet.getDate(4));
