@@ -12,7 +12,7 @@ import com.SashaBerestovoy.usermanagement.util.Messages;
 
 public class UserTableModel extends AbstractTableModel {
 
-	private static final String[] COLUMN_NAMES = {"Id", "Имя","Фамилия", "Дата рождения"};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String[] COLUMN_NAMES = {"Id", com.SashaBerestovoy.usermanagement.gui.Messages.getString("UserTableModel.first_name"),com.SashaBerestovoy.usermanagement.gui.Messages.getString("UserTableModel.last_name"), com.SashaBerestovoy.usermanagement.gui.Messages.getString("UserTableModel.date_of_birth")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static final Class[] COLUMN_CLASSES = {Long.class,String.class,String.class,Date.class};
 	private List users = null;
 	
